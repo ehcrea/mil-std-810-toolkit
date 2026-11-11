@@ -1,0 +1,268 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>MIL-STD-810 Vibration &amp; Shock Selector: Method 514.8 and 516.8 test profiles</title>
+  <meta name="description" content="Free online MIL-STD-810H vibration and shock profile selector: answer a few life-cycle questions and get the default Method 514.8 random and sine-on-random profiles (truck, military wheeled vehicle, jet cargo, helicopter, minimum integrity) and Method 516.8 shock and drop tests, with Grms, displacement, durations, shaker check, time compression and CSV export.">
+  <link rel="canonical" href="https://ehcrea.github.io/mil-std-810-toolkit/">
+  <meta property="og:type" content="website">
+  <meta property="og:site_name" content="ehcrea">
+  <meta property="og:title" content="MIL-STD-810 Vibration &amp; Shock Selector">
+  <meta property="og:description" content="Pick the life cycle, get the MIL-STD-810H Method 514.8 vibration and Method 516.8 shock defaults with Grms, durations and breakpoint export. Free, runs in your browser.">
+  <meta property="og:url" content="https://ehcrea.github.io/mil-std-810-toolkit/">
+  <meta property="og:image" content="https://ehcrea.github.io/mil-std-810-toolkit/icons/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta name="twitter:card" content="summary_large_image">
+  <script type="application/ld+json">{"@context":"https://schema.org","@type":"WebApplication","name":"MIL-STD-810 Vibration & Shock Selector","url":"https://ehcrea.github.io/mil-std-810-toolkit/","description":"MIL-STD-810H Method 514.8 vibration and Method 516.8 shock default profile selector with PSD tools.","applicationCategory":"EngineeringApplication","operatingSystem":"Any (web browser)","isAccessibleForFree":true,"offers":{"@type":"Offer","price":"0","priceCurrency":"EUR"},"license":"https://opensource.org/licenses/MIT","author":{"@type":"Person","name":"Eren Tozlu","url":"https://erentozlu.com"},"publisher":{"@type":"Organization","name":"ehcrea","url":"https://ehcrea.com"},"codeRepository":"https://github.com/ehcrea/mil-std-810-toolkit"}</script>
+  <link rel="icon" href="icons/favicon.svg" type="image/svg+xml">
+  <link rel="icon" href="icons/favicon-32.png" sizes="32x32" type="image/png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png" sizes="180x180">
+  <link rel="manifest" href="manifest.webmanifest">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-title" content="MIL-810">
+  <meta name="theme-color" content="#f4f4f2" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#111110" media="(prefers-color-scheme: dark)">
+  <link rel="stylesheet" href="css/style.css?v=1">
+  <script>
+    try { const t = localStorage.getItem('m810.theme'); if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t); } catch (e) { /* storage unavailable */ }
+  </script>
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <img class="logo" src="icons/favicon.svg" alt="" width="30" height="30">
+      <div>
+        <h1>MIL-STD-810 Vibration &amp; Shock Selector</h1>
+        <p class="subtitle">Method 514.8 &amp; 516.8 default profiles · MIL-STD-810H · v1.0</p>
+      </div>
+    </div>
+    <div class="toolbar">
+      <label class="preset">
+        <span class="sr-only">Example</span>
+        <select id="preset" aria-label="Example life cycle"><option value="">Load example life cycle…</option></select>
+      </label>
+      <button type="button" class="btn" id="share" title="Copy a link containing these inputs">Copy link</button>
+      <button type="button" class="btn" id="print" title="Print or save as PDF">Print / PDF</button>
+      <button type="button" class="btn" id="help-open">Help</button>
+      <button type="button" class="btn" id="about-open">About</button>
+      <button type="button" class="btn btn-icon" id="theme" title="Toggle light/dark theme" aria-label="Toggle theme">
+        <svg width="16" height="16" viewBox="0 0 16 16" aria-hidden="true"><circle cx="8" cy="8" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"></circle><path d="M8 1.5a6.5 6.5 0 0 1 0 13z" fill="currentColor"></path></svg>
+      </button>
+    </div>
+  </header>
+
+  <main class="layout">
+    <!-- ================= INPUTS ================= -->
+    <form class="inputs" id="form" autocomplete="off" novalidate>
+      <fieldset>
+        <legend><span class="step">1</span>Life cycle: how will the item travel and be used?</legend>
+        <p class="hint">Tick every phase in the item's life. Each one adds a test to the plan.</p>
+        <div class="phases" id="phases"></div>
+      </fieldset>
+
+      <fieldset>
+        <legend><span class="step">2</span>Test item</legend>
+        <div class="grid2">
+          <label><span class="lt">Mass <span class="u">kg</span></span><input type="number" id="mass" min="0.01" step="any" value="12"></label>
+          <label><span class="lt">Largest dimension <span class="u">cm</span></span><input type="number" id="dim" min="1" step="any" value="60"></label>
+        </div>
+        <div>
+          <div class="mini-label">Load orientation during transport</div>
+          <div class="seg seg-wide" role="radiogroup" id="orient">
+            <button type="button" role="radio" data-v="known" aria-checked="true">Known (per axis)</button>
+            <button type="button" role="radio" data-v="unknown" aria-checked="false">Unknown / variable</button>
+          </div>
+        </div>
+        <div>
+          <div class="mini-label">Platform for shock levels</div>
+          <div class="seg seg-wide" role="radiogroup" id="platform">
+            <button type="button" role="radio" data-v="ground" aria-checked="true">Ground materiel</button>
+            <button type="button" role="radio" data-v="flight" aria-checked="false">Flight vehicle materiel</button>
+          </div>
+        </div>
+        <label class="check"><input type="checkbox" id="truckOnly"> Mounted only in trucks / semi-trailers (functional shock 20 g)</label>
+      </fieldset>
+
+      <fieldset>
+        <legend><span class="step">3</span>Shaker (optional)</legend>
+        <p class="hint">Check whether the selected profile fits your shaker. Moving mass = armature + fixture + item.</p>
+        <div class="grid2">
+          <label><span class="lt">Armature + fixture <span class="u">kg</span></span><input type="number" id="sh-mass" min="0" step="any" value="8"></label>
+          <label><span class="lt">Random force rating <span class="u">N rms</span></span><input type="number" id="sh-force" min="0" step="any" value="4000"></label>
+          <label><span class="lt">Stroke <span class="u">mm p-p</span></span><input type="number" id="sh-stroke" min="0" step="any" value="51"></label>
+          <label><span class="lt">Max velocity <span class="u">m/s</span></span><input type="number" id="sh-vel" min="0" step="any" value="1.8"></label>
+        </div>
+      </fieldset>
+    </form>
+
+    <!-- ================= RESULTS ================= -->
+    <section class="results" aria-live="polite">
+      <div class="card hero" id="hero">
+        <div class="hero-main">
+          <div class="hero-label">Shaker time for the vibration tests</div>
+          <div class="hero-value" id="hero-value">—</div>
+          <div class="hero-sub" id="hero-sub"></div>
+        </div>
+        <dl class="hero-side" id="hero-side"></dl>
+      </div>
+
+      <div class="card issues" id="issues" hidden></div>
+
+      <div class="card">
+        <div class="card-head"><h2>Test plan</h2><span class="badge">MIL-STD-810H defaults</span></div>
+        <p class="card-note">Default levels for use when no measured data exist. Click a vibration row to view its profile.</p>
+        <div class="table-wrap" id="plan"></div>
+      </div>
+
+      <div class="card" id="viewer">
+        <div class="card-head">
+          <h2 id="viewer-title">Profile</h2>
+          <div class="viewer-tools">
+            <select id="viewer-select" aria-label="Profile to view"></select>
+            <button type="button" class="btn" id="csv">Export CSV</button>
+          </div>
+        </div>
+        <p class="card-note" id="viewer-ref"></p>
+        <div class="viewer-opts" id="viewer-opts"></div>
+        <div class="chart" id="chart"></div>
+        <div class="metrics" id="viewer-metrics"></div>
+        <div class="grid-cards viewer-detail">
+          <div>
+            <h3 class="sub-h">Breakpoints</h3>
+            <div class="table-wrap" id="viewer-table"></div>
+          </div>
+          <div>
+            <h3 class="sub-h">Notes</h3>
+            <ul class="advice" id="viewer-notes"></ul>
+            <div id="shaker-box"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="card" id="shock-card">
+        <div class="card-head"><h2>Shock and drop (Method 516.8)</h2><span class="badge" id="shock-badge"></span></div>
+        <div id="shock"></div>
+      </div>
+
+      <details class="card lib" id="tool-psd">
+        <summary>PSD calculator — Grms, velocity, displacement</summary>
+        <p class="card-note">Paste or edit breakpoints (frequency Hz, PSD g²/Hz), one pair per line. Lines are joined straight on log-log axes, as in the standard.</p>
+        <div class="psd-tool">
+          <div>
+            <textarea id="psd-in" rows="10" spellcheck="false"></textarea>
+            <div class="lib-tools">
+              <button type="button" class="btn" id="psd-load">Load viewed profile</button>
+              <label class="inline">Scale <input type="number" id="psd-db" value="0" step="0.5"> dB</label>
+            </div>
+          </div>
+          <div>
+            <div class="metrics" id="psd-metrics"></div>
+            <div class="table-wrap" id="psd-table"></div>
+          </div>
+        </div>
+        <div class="chart" id="psd-chart"></div>
+      </details>
+
+      <details class="card lib" id="tool-comp">
+        <summary>Test-time compression</summary>
+        <p class="card-note">Fatigue-equivalent scaling from MIL-STD-810H Method 514.8 Annex A: W₂/W₁ = (T₁/T₂)<sup>2/m</sup> for random (PSD), A₂/A₁ = (T₁/T₂)<sup>1/m</sup> for sine.</p>
+        <div class="grid4">
+          <label><span class="lt">Reference time T₁ <span class="u">h</span></span><input type="number" id="cp-t1" value="4" min="0" step="any"></label>
+          <label><span class="lt">Test time T₂ <span class="u">h</span></span><input type="number" id="cp-t2" value="1" min="0" step="any"></label>
+          <label><span class="lt">Exponent m</span><input type="number" id="cp-m" value="7.5" min="1" step="any"></label>
+          <label><span class="lt">Excitation</span><select id="cp-type"><option value="random">Random (PSD)</option><option value="sine">Sine (amplitude)</option></select></label>
+        </div>
+        <div class="metrics" id="cp-out"></div>
+        <p class="hint">Annex A uses m = 7.5 for random and m = 6 for sine. Keep the exaggeration modest: large increases can create failure modes that never occur in service.</p>
+      </details>
+
+      <details class="card notes" id="theory">
+        <summary>Theory &amp; how the selector works</summary>
+        <div class="notes-body theory">
+          <h3>Tailoring first, defaults second</h3>
+          <p>MIL-STD-810 is a tailoring standard. Part One asks for a Life Cycle Environmental Profile (LCEP): every transport, storage and operating phase, its duration and its platform. Measured data from the real platform give the best test. The curves in this tool are the standard's <b>defaults</b> for when no measured data exist. They are deliberately enveloping, so expect them to be conservative.</p>
+          <h3>Random vibration and Grms</h3>
+          <p>A random vibration test is defined by an acceleration spectral density (ASD/PSD) W(f) in g²/Hz. Breakpoints are joined by straight lines on log-log axes, so each segment follows W = W₁(f/f₁)<sup>n</sup> with slope 10·log₁₀(W₂/W₁)/log₂(f₂/f₁) dB/octave. The overall rms acceleration is the square root of the area:</p>
+          <p class="formula">G<sub>rms</sub> = √( ∫ W(f) df )</p>
+          <p>Velocity and displacement follow by dividing by (2πf)² and (2πf)⁴ before integrating. Because random peaks reach about three times the rms value, shaker stroke is checked against 6σ peak-to-peak displacement and velocity against 3σ.</p>
+          <h3>Sine-on-random (helicopter)</h3>
+          <p>Rotor blades excite strong tones at the rotor speed 1P and the blade-passage frequency n·1P and its harmonics, over a low random background. Category 14 gives the random levels W₀ and W₁ and the peak sine amplitude A as a function of frequency for four materiel locations. The default 4 h per axis represents a 2500 flight-hour life; shorter lives scale linearly, down to a 0.5 h minimum, below which the levels are reduced with the fatigue relation instead.</p>
+          <h3>Time compression</h3>
+          <p>Annex A equates fatigue damage with an inverse power law (S–N curve): doubling the time at a lower stress gives the same damage as a shorter time at a higher stress. With exponent m, the PSD level scales with (T₁/T₂)<sup>2/m</sup> and a sine amplitude with (T₁/T₂)<sup>1/m</sup>.</p>
+          <h3>Shock</h3>
+          <p>Method 516.8 prefers a shock response spectrum (SRS) derived from measured data. Without data, it gives default SRS peak levels and effective durations, and terminal-peak sawtooth pulses as an alternative when the test equipment cannot reproduce an SRS. A pulse's velocity change ΔV = ½·A·T for a sawtooth; the equivalent free-fall height is ΔV²/2g.</p>
+          <p class="about-meta">This tool is a starting point for a test plan, not a substitute for the standard. Confirm every level, duration and procedure against your copy of MIL-STD-810H and your contract's tailoring.</p>
+        </div>
+      </details>
+
+      <details class="card notes" id="refs">
+        <summary>References</summary>
+        <div class="notes-body">
+          <ol class="refs">
+            <li>MIL-STD-810H, <i>Environmental Engineering Considerations and Laboratory Tests</i>, Method 514.8 <i>Vibration</i>: Annex A (engineering information, time compression), Annex C (transportation: Categories 4, 5, 7), Annex D (operational: Category 14 helicopter), Annex E (minimum integrity, Category 24). U.S. Department of Defense, 31 January 2019 (Change 1, 18 May 2022). <span class="ref-use">Source of every vibration profile, rotor table and duration.</span></li>
+            <li>MIL-STD-810H, Method 516.8 <i>Shock</i>: Procedures I (functional), IV (transit drop), V (crash hazard), VI (bench handling). <span class="ref-use">Default SRS levels, sawtooth pulses, drop heights.</span></li>
+            <li>MIL-STD-810H, Part One: tailoring, Life Cycle Environmental Profile (LCEP) and Environmental Issues/Criteria List. <span class="ref-use">Why defaults must be tailored.</span></li>
+            <li>Steinberg, D. S. (2000). <i>Vibration Analysis for Electronic Equipment</i> (3rd ed.). Wiley. <span class="ref-use">Random vibration, 3σ peaks, displacement.</span></li>
+            <li>Lalanne, C. (2014). <i>Mechanical Vibration and Shock Analysis</i>, Vol. 3 <i>Random Vibration</i> and Vol. 5 <i>Specification Development</i>. Wiley-ISTE. <span class="ref-use">PSD integration, fatigue-equivalent test tailoring.</span></li>
+            <li>Harris, C. M., &amp; Piersol, A. G. (Eds.) (2010). <i>Harris' Shock and Vibration Handbook</i> (6th ed.). McGraw-Hill. <span class="ref-use">Shock pulses, SRS, velocity change.</span></li>
+          </ol>
+        </div>
+      </details>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <span>© 2026 Eren Tozlu</span>
+    <a href="https://tools.ehcrea.com" target="_blank" rel="noopener">More ehcrea tools</a>
+    <a href="https://ehcrea.com" target="_blank" rel="noopener">ehcrea.com</a>
+    <a href="https://github.com/ehcrea/mil-std-810-toolkit/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a>
+  </footer>
+
+  <dialog class="about" id="about" aria-labelledby="about-title">
+    <form method="dialog"><button class="btn btn-icon about-close" title="Close" aria-label="Close">✕</button></form>
+    <div class="about-head"><img src="icons/favicon.svg" alt=""><div><h2 id="about-title">MIL-STD-810 Vibration &amp; Shock Selector</h2><p>Version 1.0 · by Eren Tozlu</p></div></div>
+    <p>A free, browser-based tool that turns a product's life cycle into a starting test plan from the MIL-STD-810H defaults: Method 514.8 vibration profiles with their Grms, displacement and durations, and Method 516.8 shock and drop tests. All calculations run in your browser.</p>
+    <p>Every breakpoint is transcribed from MIL-STD-810H and checked against the overall rms printed in the standard. The PSD calculator, shaker check and time-compression tools work with any profile.</p>
+    <p>Made by Eren Tozlu, a mechanical design engineer with a background in rugged electronics packaging for defense, avionics and naval systems. More engineering tools at <a href="https://tools.ehcrea.com" target="_blank" rel="noopener">tools.ehcrea.com</a>.</p>
+    <p>Open source under the <a href="https://github.com/ehcrea/mil-std-810-toolkit/blob/main/LICENSE" target="_blank" rel="noopener">MIT License</a>; the source code is on <a href="https://github.com/ehcrea/mil-std-810-toolkit" target="_blank" rel="noopener">GitHub</a>.</p>
+    <div class="about-support"><p><strong>Found it useful?</strong> This tool is free and I build new engineering tools in my spare time. If it saved you a day of digging through annexes, you can support it on Patreon. Thank you!</p><a class="btn-support" href="https://www.patreon.com/ehcrea" target="_blank" rel="noopener"><span aria-hidden="true">♥</span> Support me on Patreon</a></div>
+    <p class="about-meta">Not affiliated with the U.S. Department of Defense. Default levels are a starting point; the contract's tailoring and the current revision of the standard govern.</p>
+  </dialog>
+
+  <dialog class="about help" id="help" aria-labelledby="help-title">
+    <form method="dialog"><button class="btn btn-icon about-close" title="Close" aria-label="Close">✕</button></form>
+    <h2 id="help-title">How to use the selector</h2>
+    <p>New here? Pick an example from <b>Load example life cycle…</b> and change one thing at a time.</p>
+    <h3>Three steps</h3>
+    <ol>
+      <li><b>Life cycle</b>: tick each phase the item will see. Enter the distance, number of take-offs or flight hours; the test duration scales with it.</li>
+      <li><b>Test item</b>: mass and size select the transit drop; orientation decides per-axis curves or the envelope; the platform sets the shock levels.</li>
+      <li><b>Read the plan</b>: every test with its reference, Grms and duration. Click a row to see the curve, breakpoints and shaker check, and export the breakpoints as CSV for your vibration controller.</li>
+    </ol>
+    <h3>Which profile when?</h3>
+    <dl>
+      <dt>Highway truck</dt><dd>Commercial shipping on paved roads to a depot or customer.</dd>
+      <dt>Wheeled vehicle</dt><dd>Military tactical trucks and trailers on secondary roads and cross-country, as secured cargo.</dd>
+      <dt>Loose cargo</dt><dd>Unrestrained items bouncing on a truck bed (package tester, not a shaker).</dd>
+      <dt>Jet cargo</dt><dd>Air transport in a cargo aircraft; one minute per take-off.</dd>
+      <dt>Helicopter</dt><dd>Materiel installed in, or carried on, a helicopter: sine tones at the rotor frequencies over random.</dd>
+      <dt>Minimum integrity</dt><dd>Only when the environment is unknown. Prefer a tailored profile.</dd>
+    </dl>
+    <h3>Tips</h3>
+    <ul>
+      <li><b>Copy link</b> stores all inputs in the URL.</li>
+      <li><b>Print / PDF</b> gives a one-document test plan summary.</li>
+      <li>The PSD calculator accepts any breakpoints, so you can check your own spec too.</li>
+    </ul>
+  </dialog>
+
+  <div class="toast" id="toast" role="status" hidden></div>
+
+  <script src="js/data.js?v=1"></script>
+  <script src="js/calc.js?v=1"></script>
+  <script src="js/app.js?v=1"></script>
+</body>
+</html>
