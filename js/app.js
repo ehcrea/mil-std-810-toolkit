@@ -667,7 +667,7 @@
         (!document.documentElement.getAttribute('data-theme') && matchMedia('(prefers-color-scheme: dark)').matches);
       const t = dark ? 'light' : 'dark';
       document.documentElement.setAttribute('data-theme', t);
-      try { localStorage.setItem('m810.theme', t); } catch (e) { /* ignore */ }
+      try { localStorage.setItem('ehcrea.theme', t); } catch (e) { /* ignore */ }
     });
     $('#about-open').addEventListener('click', () => $('#about').showModal());
     $('#help-open').addEventListener('click', () => $('#help').showModal());
