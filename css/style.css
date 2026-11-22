@@ -475,3 +475,18 @@ table.plan td:nth-child(n+5), table.plan th:nth-child(n+5) { white-space: nowrap
   .hero-side dd { font-size: 15px; }
   .card-head { align-items: flex-start; }
 }
+
+/* Phones: every panel stays inside the screen width, in every language
+   (same rules in all ehcrea calculators). Grid and flex children may shrink below their
+   content width, long labels wrap, wide tables scroll inside their own box. */
+.layout > *, .results > *, fieldset, .card, .grid2 > *, .grid3 > *, .grid-cards > *, .layout-picker > *, .stack-legend > * { min-width: 0; }
+.layout-picker button { overflow-wrap: anywhere; }
+input, select, textarea { max-width: 100%; }
+.legend-key { display: inline-flex; flex-wrap: wrap; align-items: center; row-gap: 4px; max-width: 100%; }
+.table-wrap { max-width: 100%; }
+@media (max-width: 640px) {
+  table.data td:first-child { white-space: normal; }
+  /* Field label and unit wrap onto two lines instead of widening the form. */
+  .layout label:not(.check) { display: flex; flex-wrap: wrap; align-items: baseline; }
+  .layout label:not(.check) > input, .layout label:not(.check) > select { flex: 1 0 100%; min-width: 0; }
+}
