@@ -10,17 +10,18 @@
  *   the cache.
  */
 'use strict';
-const CACHE = "mil-std-810-toolkit-28b4ccb6cea9";
+const CACHE = "mil-std-810-toolkit-caba6fedb57f";
 const PREFIX = "mil-std-810-toolkit-";
 const FILES = [
   "css/style.css",
-  "icons/apple-touch-icon.png",
+  "icons/app-icon-180.png",
+  "icons/app-icon-192.png",
+  "icons/app-icon-512.png",
+  "icons/app-icon-maskable-512.png",
+  "icons/app-icon.svg",
   "icons/favicon-16.png",
   "icons/favicon-32.png",
   "icons/favicon.svg",
-  "icons/icon-192.png",
-  "icons/icon-512.png",
-  "icons/icon-maskable-512.png",
   "./",
   "js/app.js",
   "js/calc.js",
