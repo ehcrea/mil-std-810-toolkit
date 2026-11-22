@@ -1,4 +1,5 @@
 {
+  "id": "./",
   "name": "MIL-STD-810 Vibration & Shock Selector",
   "short_name": "MIL-810",
   "description": "MIL-STD-810H vibration and shock default profile selector with PSD tools.",
@@ -29,5 +30,11 @@
       "sizes": "any",
       "type": "image/svg+xml"
     }
-  ]
+  ],
+  "lang": "en",
+  "categories": [
+    "productivity",
+    "utilities"
+  ],
+  "orientation": "any"
 }
