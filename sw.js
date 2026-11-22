@@ -10,7 +10,7 @@
  *   the cache.
  */
 'use strict';
-const CACHE = "mil-std-810-toolkit-d1f4fb43db25";
+const CACHE = "mil-std-810-toolkit-118e5a840162";
 const PREFIX = "mil-std-810-toolkit-";
 const FILES = [
   "css/style.css",
